@@ -1,0 +1,29 @@
+# ===== ROOT =====
+node_modules/
+.DS_Store
+*.log
+.env
+.env.local
+.env.production
+.env.development.local
+.env.test.local
+
+# ===== BACKEND =====
+backend/node_modules/
+backend/.env
+backend/logs/
+
+# ===== FRONTEND =====
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+frontend/.env.production.local
+frontend/out/
+frontend/build/
+
+# ===== MISC =====
+*.pem
+.vercel
+.idea/
+.vscode/
+*.zip

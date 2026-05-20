@@ -1,0 +1,12 @@
+{
+  "name": "yarana-lifeos",
+  "version": "1.0.0",
+  "description": "Yarana LifeOS - Your Personal Life Operating System",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "setup-db": "cd backend && npm run setup-db",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install"
+  },
+  "private": true
+}
