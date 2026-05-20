@@ -46,7 +46,11 @@ function UnlockModal({ note, onClose, onUnlocked }: any) {
     try {
       const res: any = await api.post(`/notes/${note.id}/unlock`, { password: pass });
       onUnlocked(res.content);
-    } catch (e: any) { setErr(e?.message || 'Galat password'); }
+    } catch (e: any) {
+      // Extract error message properly
+      const msg = e?.message || e?.error || 'Galat password';
+      setErr(msg);
+    }
     setLoading(false);
   };
   return (
@@ -81,7 +85,8 @@ function UnlockModal({ note, onClose, onUnlocked }: any) {
 
 // ─── Preview Modal ─────────────────────────────────────────────────
 function PreviewModal({ note, unlockedContent, onClose, onEdit, onDelete }: any) {
-  const content = note.is_locked ? unlockedContent : note.content;
+  const isLocked = Number(note.is_locked) === 1;
+  const content = isLocked ? unlockedContent : note.content;
   return (
     <div style={S.overlay} onClick={e => e.target === e.currentTarget && onClose()}>
       <div style={{ ...S.modal, maxWidth: 560 }}>
@@ -91,7 +96,7 @@ function PreviewModal({ note, unlockedContent, onClose, onEdit, onDelete }: any)
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               <div style={{ width: 12, height: 12, borderRadius: '50%', background: note.color || '#6366f1', flexShrink: 0 }} />
               <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: 'white' }}>{note.title}</h2>
-              {note.is_locked && <Lock size={14} color="#818cf8" />}
+              {isLocked && <Lock size={14} color="#818cf8" />}
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' as const }}>
               <span style={{ fontSize: 11, padding: '3px 9px', borderRadius: 20, background: 'rgba(99,102,241,0.15)', color: '#818cf8', border: '1px solid rgba(99,102,241,0.25)', textTransform: 'capitalize' as const }}>
@@ -213,8 +218,13 @@ export default function NotesPage() {
   const notes = (data as any)?.notes || [];
 
   const handleCardClick = (note: any) => {
-    if (note.is_locked && !unlockedContents[note.id]) { setUnlockNote(note); }
-    else { setPreviewNote(note); }
+    // PHP returns is_locked as integer 1/0, cast to boolean
+    const isLocked = Number(note.is_locked) === 1;
+    if (isLocked && !unlockedContents[note.id]) {
+      setUnlockNote(note);
+    } else {
+      setPreviewNote(note);
+    }
   };
 
   return (
@@ -259,9 +269,9 @@ export default function NotesPage() {
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
           {notes.map((note: any) => (
-            <div key={note.id} onClick={() => handleCardClick(note)} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 16, cursor: 'pointer', borderLeft: `4px solid ${note.color||'#6366f1'}`, transition: 'all 0.2s', position: 'relative', overflow: 'hidden' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'none'; (e.currentTarget as HTMLElement).style.boxShadow = 'none'; }}>
+            <div key={note.id} onClick={() => handleCardClick(note)} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 16, cursor: 'pointer', borderLeft: `4px solid ${note.color||'#6366f1'}`, transition: 'all 0.2s', position: 'relative', overflow: 'hidden', userSelect: 'none' as const }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)'; (e.currentTarget as HTMLElement).style.borderColor = note.color || '#6366f1'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'none'; (e.currentTarget as HTMLElement).style.boxShadow = 'none'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)'; (e.currentTarget as HTMLElement).style.borderLeftColor = note.color || '#6366f1'; }}>
 
               {/* Glow */}
               <div style={{ position: 'absolute', top: -20, right: -20, width: 70, height: 70, borderRadius: '50%', background: note.color||'#6366f1', opacity: 0.08, pointerEvents: 'none' }} />
@@ -269,10 +279,10 @@ export default function NotesPage() {
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 5 }}>
-                    {note.is_locked && <Lock size={12} color="#818cf8" />}
-                    {note.is_locked && unlockedContents[note.id] && <Unlock size={12} color="#10b981" />}
+                    {Number(note.is_locked) === 1 && <Lock size={12} color="#818cf8" />}
+                    {Number(note.is_locked) === 1 && unlockedContents[note.id] && <Unlock size={12} color="#10b981" />}
                     <span style={{ fontSize: 14, fontWeight: 600, color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>
-                      {note.is_locked && !unlockedContents[note.id] ? '🔒 Locked Note' : note.title}
+                      {Number(note.is_locked) === 1 && !unlockedContents[note.id] ? '🔒 Locked Note' : note.title}
                     </span>
                   </div>
                   <span style={{ fontSize: 11, padding: '2px 7px', borderRadius: 20, background: 'rgba(107,114,128,0.15)', color: '#9ca3af', textTransform: 'capitalize' as const }}>{note.category?.replace('_',' ')}</span>
@@ -280,13 +290,13 @@ export default function NotesPage() {
               </div>
 
               {/* Content preview */}
-              {!note.is_locked && note.content && (
+              {Number(note.is_locked) !== 1 && note.content && (
                 <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' as any, lineHeight: 1.6 }}>
                   {note.content}
                 </div>
               )}
 
-              {note.is_locked && !unlockedContents[note.id] && (
+              {Number(note.is_locked) === 1 && !unlockedContents[note.id] && (
                 <div style={{ fontSize: 12, color: '#4b5563', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
                   <Lock size={11} /> Password se unlock karo
                 </div>

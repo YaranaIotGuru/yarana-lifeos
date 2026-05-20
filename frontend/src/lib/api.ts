@@ -22,12 +22,16 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    if (error.response?.status === 401) {
+    const url = error.config?.url || '';
+    // Skip auto-logout for unlock endpoint (401 = wrong password, not expired token)
+    const isUnlockRoute = url.includes('/unlock');
+    if (error.response?.status === 401 && !isUnlockRoute) {
       localStorage.removeItem('yarana_token');
       localStorage.removeItem('yarana_user');
       if (typeof window !== 'undefined') window.location.href = '/login';
     }
-    return Promise.reject(error.response?.data || { message: 'Network error' });
+    const msg = error.response?.data?.message || error.response?.data?.error || 'Network error';
+    return Promise.reject({ message: msg, status: error.response?.status });
   }
 );
 
