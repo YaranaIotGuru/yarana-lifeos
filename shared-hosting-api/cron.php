@@ -25,6 +25,9 @@ if (php_sapi_name() !== 'cli') {
 ini_set('display_errors', 0);
 error_reporting(0);
 
+// ⚡ Set PHP timezone to IST
+date_default_timezone_set('Asia/Kolkata');
+
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/fcm_helper.php';
@@ -34,7 +37,7 @@ header('Content-Type: application/json');
 try {
     $db = get_db();
 
-    // ⚡ Fix: Set MySQL timezone to IST so NOW() matches stored reminder times
+    // ⚡ Set MySQL timezone to IST so NOW() matches stored reminder times
     $db->exec("SET time_zone = '+05:30'");
 
     // Find tasks where reminder_time is within the last 3 minutes AND not yet notified
