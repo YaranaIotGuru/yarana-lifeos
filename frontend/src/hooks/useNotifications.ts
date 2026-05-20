@@ -58,19 +58,9 @@ export function useNotifications() {
         // Foreground message handler (app is open)
         onMessage(messaging, (payload) => {
           const { title, body } = payload.notification || {};
-          // Show toast notification when app is open
-          toast(
-            () => (
-              <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                <span style={{ fontSize: 22 }}>⏰</span>
-                <div>
-                  <div style={{ fontWeight: 700, color: 'white', marginBottom: 3 }}>
-                    {title || 'Yarana Reminder'}
-                  </div>
-                  <div style={{ fontSize: 13, color: '#9ca3af' }}>{body}</div>
-                </div>
-              </div>
-            ) as any,
+          // Simple toast — no JSX needed in .ts file
+          toast.success(
+            `${title || '⏰ Yarana Reminder'}\n${body || ''}`,
             {
               duration: 8000,
               style: {
@@ -79,6 +69,8 @@ export function useNotifications() {
                 borderRadius: 14,
                 color: 'white',
                 padding: '14px 16px',
+                fontSize: '13px',
+                whiteSpace: 'pre-line',
               },
               icon: '🔔',
             }
