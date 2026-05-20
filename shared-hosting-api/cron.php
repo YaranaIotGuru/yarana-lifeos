@@ -34,7 +34,10 @@ header('Content-Type: application/json');
 try {
     $db = get_db();
 
-    // Find tasks where reminder_time is within the last 2 minutes AND not yet notified
+    // ⚡ Fix: Set MySQL timezone to IST so NOW() matches stored reminder times
+    $db->exec("SET time_zone = '+05:30'");
+
+    // Find tasks where reminder_time is within the last 3 minutes AND not yet notified
     $stmt = $db->prepare("
         SELECT t.id, t.title, t.description, t.reminder_time, t.user_id,
                f.token AS fcm_token
@@ -43,7 +46,7 @@ try {
         WHERE t.status = 'pending'
           AND t.reminder_time IS NOT NULL
           AND t.notification_sent = 0
-          AND t.reminder_time BETWEEN (NOW() - INTERVAL 2 MINUTE) AND NOW()
+          AND t.reminder_time BETWEEN (NOW() - INTERVAL 3 MINUTE) AND (NOW() + INTERVAL 1 MINUTE)
     ");
     $stmt->execute();
     $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
