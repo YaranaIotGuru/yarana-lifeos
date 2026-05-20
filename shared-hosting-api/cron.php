@@ -23,8 +23,10 @@ if (php_sapi_name() !== 'cli') {
 
 // Suppress HTML errors
 ini_set('display_errors', 0);
+error_reporting(0);
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/fcm_helper.php';
 
 header('Content-Type: application/json');
