@@ -8,6 +8,8 @@ import {
   ArrowRight, Plus, AlertCircle, CheckCircle2, Circle, BookOpen, Target
 } from 'lucide-react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+const NotificationSettings = dynamic(() => import('@/components/NotificationSettings'), { ssr: false });
 
 const card: React.CSSProperties = {
   background: 'rgba(255,255,255,0.04)',
@@ -166,6 +168,9 @@ export default function DashboardPage() {
           </>
         )}
       </div>
+
+      {/* Notification Settings */}
+      <NotificationSettings />
 
       {/* Two-column grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>

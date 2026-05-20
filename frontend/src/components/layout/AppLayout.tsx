@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+import { useNotifications } from '@/hooks/useNotifications';
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', color: '#818cf8' },
@@ -34,6 +35,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  // Initialize FCM push notifications
+  useNotifications();
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 1024);

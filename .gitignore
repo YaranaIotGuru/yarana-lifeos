@@ -26,3 +26,7 @@ frontend/build/
 .idea/
 .vscode/
 *.zip
+
+# ===== FIREBASE (SECURITY — DO NOT COMMIT) =====
+shared-hosting-api/firebase-service-account.json
+*-firebase-adminsdk-*.json

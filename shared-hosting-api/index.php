@@ -33,11 +33,12 @@ if ($res === 'health') {
 }
 
 switch ($res) {
-    case 'auth':      require __DIR__ . '/routes/auth.php';      break;
-    case 'tasks':     require __DIR__ . '/routes/tasks.php';     break;
-    case 'clients':   require __DIR__ . '/routes/clients.php';   break;
-    case 'ledger':    require __DIR__ . '/routes/ledger.php';    break;
-    case 'notes':     require __DIR__ . '/routes/notes.php';     break;
-    case 'dashboard': require __DIR__ . '/routes/dashboard.php'; break;
+    case 'auth':          require __DIR__ . '/routes/auth.php';          break;
+    case 'tasks':         require __DIR__ . '/routes/tasks.php';         break;
+    case 'clients':       require __DIR__ . '/routes/clients.php';       break;
+    case 'ledger':        require __DIR__ . '/routes/ledger.php';        break;
+    case 'notes':         require __DIR__ . '/routes/notes.php';         break;
+    case 'dashboard':     require __DIR__ . '/routes/dashboard.php';     break;
+    case 'notifications': require __DIR__ . '/routes/notifications.php'; break;
     default: err('Route not found', 404);
 }
