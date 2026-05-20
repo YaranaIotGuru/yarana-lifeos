@@ -1,7 +1,18 @@
 <?php
-// Routes: GET/POST /notes | PUT/DELETE /notes/:id
+// Routes: GET/POST /notes | PUT/DELETE /notes/:id | POST /notes/:id/unlock
 $uid = auth_user(); $db = get_db();
 $id  = is_numeric($p1) ? (int)$p1 : null;
+
+// POST /notes/:id/unlock — verify password and return content
+if ($method === 'POST' && $id && $p2 === 'unlock') {
+    $b = body();
+    $stmt = $db->prepare('SELECT * FROM notes WHERE id=? AND user_id=?'); $stmt->execute([$id,$uid]);
+    $note = $stmt->fetch(); if (!$note) err('Not found', 404);
+    if (!$note['is_locked']) ok(['content' => $note['content']]);
+    if (empty($b['password'])) err('Password required', 401);
+    if (!password_verify($b['password'], $note['lock_hash'])) err('Wrong password ❌', 401);
+    ok(['content' => $note['content']], 'Unlocked!');
+}
 
 // GET /notes
 if ($method === 'GET' && !$id) {

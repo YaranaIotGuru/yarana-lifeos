@@ -4,7 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import {
   LayoutDashboard, CheckSquare, Users, BookOpen, Wallet,
-  LogOut, Menu, X, Bell, Plus, Zap
+  LogOut, Menu, X, Bell, Plus, Zap, Trash2
 } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
@@ -15,6 +15,15 @@ const navItems = [
   { href: '/clients', icon: Users, label: 'Clients', color: '#60a5fa' },
   { href: '/ledger', icon: Wallet, label: 'Ledger', color: '#fbbf24' },
   { href: '/notes', icon: BookOpen, label: 'Notes', color: '#f472b6' },
+];
+
+const bottomNavItems = [
+  { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', color: '#818cf8' },
+  { href: '/tasks', icon: CheckSquare, label: 'Tasks', color: '#34d399' },
+  { href: '/clients', icon: Users, label: 'Clients', color: '#60a5fa' },
+  { href: '/ledger', icon: Wallet, label: 'Ledger', color: '#fbbf24' },
+  { href: '/notes', icon: BookOpen, label: 'Notes', color: '#f472b6' },
+  { href: '/trash', icon: Trash2, label: 'Trash', color: '#f87171' },
 ];
 
 const SIDEBAR_WIDTH = 260;
@@ -172,6 +181,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </Link>
             );
           })}
+          {/* Trash separator */}
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', margin: '8px 0' }} />
+          <Link href="/trash" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '11px 14px', borderRadius: 12, textDecoration: 'none', background: pathname === '/trash' ? 'rgba(239,68,68,0.12)' : 'transparent', border: pathname === '/trash' ? '1px solid rgba(239,68,68,0.2)' : '1px solid transparent', transition: 'all 0.15s ease' }}
+            onMouseEnter={e => { if (pathname !== '/trash') (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)'; }}
+            onMouseLeave={e => { if (pathname !== '/trash') (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+          >
+            <Trash2 size={18} color={pathname === '/trash' ? '#f87171' : '#6b7280'} style={{ flexShrink: 0 }} />
+            <span style={{ fontSize: 13.5, fontWeight: pathname === '/trash' ? 600 : 500, color: pathname === '/trash' ? 'white' : '#9ca3af' }}>Recycle Bin</span>
+          </Link>
         </nav>
 
         {/* Logout */}
@@ -294,7 +312,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             padding: '8px 4px 12px',
             zIndex: 40,
           }}>
-            {navItems.map((item) => {
+            {bottomNavItems.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               return (
                 <Link
